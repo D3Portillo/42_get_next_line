@@ -6,11 +6,74 @@
 /*   By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 04:34:47 by dcerrito          #+#    #+#             */
-/*   Updated: 2022/04/12 04:39:47 by dcerrito         ###   ########.fr       */
+/*   Updated: 2022/04/14 08:49:22 by dcerrito         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "get_next_line.h"
+
+static int	fetches_content(int fd, int *total_read, char **__container)
+{
+	char	*result;
+	char	read_content[BUFFER_SIZE];
+	char	*container;
+	int		merge_size;
+	int		read_size;
+
+	container = *__container;
+	merge_size = 1 + ft_strlen(container);
+	result = malloc(BUFFER_SIZE + merge_size);
+	read_size = read(fd, read_content, BUFFER_SIZE);
+	*total_read += read_size;
+	if (!result || read_size <= 0)
+		return (free(result), read_size);
+	ft_strlcpy(result, container, merge_size);
+	ft_strlcat(result, read_content, read_size + merge_size);
+	free(container);
+	return (*__container = result, read_size);
+}
+
+static char	*ft_sanitize(char **cont_ref, char *to_return, char *new_cont)
+{
+	free(*cont_ref);
+	return (*cont_ref = new_cont, to_return);
+}
+
+static char	*ft_get_line(char **cont_ref, int idx)
+{
+	char	*result;
+
+	result = ft_substr(*cont_ref, 0, idx);
+	return (
+		ft_sanitize(
+			cont_ref, result, ft_substr(*cont_ref, idx, ft_strlen(*cont_ref)))
+	);
+}
+
 char	*get_next_line(int fd)
 {
-	write (fd, "123", 3);
+	// static char	*fd_contents[1024];
+	static char	*content;
+	int			total_read;
+	int			i;
+
+	if (fd < 0 || BUFFER_SIZE < 0)
+		return (NULL);
+	printf("%s", content);
+	fetches_content(fd, &total_read, &content);
+	while (content)
+	{
+		i = -1;
+		while (content[++i])
+			if (content[i] == '\n')
+				return (ft_get_line(&content, i + 1));
+		if (fetches_content(fd, &total_read, &content) == 0)
+		{
+			if (i == 0)
+				return (ft_sanitize(&content, NULL, NULL));
+			if (total_read >= BUFFER_SIZE || i < BUFFER_SIZE)
+				return (ft_sanitize(&content, ft_strdup(content), NULL));
+		}
+	}
+	return (content);
 }
