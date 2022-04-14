@@ -6,7 +6,7 @@
 #    By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/12 08:06:16 by dcerrito          #+#    #+#              #
-#    Updated: 2022/04/12 04:33:26 by dcerrito         ###   ########.fr        #
+#    Updated: 2022/04/13 04:27:53 by dcerrito         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,4 +28,7 @@ clean:
 fclean: clean
 	$(FRM) $(NAME)
 re: fclean all
-.PHONY: re clean fclean all
+run: all
+	@$(CC) $(NAME) main.c || echo "ERROR: You must provide a main.c"
+	@./a.out
+.PHONY: re clean fclean all run
