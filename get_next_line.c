@@ -6,7 +6,7 @@
 /*   By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 04:34:47 by dcerrito          #+#    #+#             */
-/*   Updated: 2022/04/15 03:22:26 by dcerrito         ###   ########.fr       */
+/*   Updated: 2022/04/15 10:47:58 by dcerrito         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,21 @@ static int	fetches_content(int fd, long *total_read, char **container)
 {
 	char	*result;
 	char	read_content[BUFFER_SIZE];
-	int		merge_size;
+	long	merge_size;
 	long	read_size;
+	long	total_size;
 
-	merge_size = ft_strlen(*container);
-	result = malloc(BUFFER_SIZE + merge_size + 1);
 	read_size = read(fd, read_content, BUFFER_SIZE);
-	if (read_size > 0)
-		*total_read += read_size;
-	if (!result || read_size <= 0)
-		return (free(result), read_size);
+	if (read_size < 1)
+		return (0);
+	merge_size = ft_strlen(*container);
+	total_size = merge_size + read_size + 1;
+	result = malloc(total_size);
+	if (!result)
+		return (0);
+	*total_read += read_size;
 	ft_strcpy(result, *container, merge_size);
-	ft_strlcat(result, merge_size, read_content, read_size + merge_size + 1);
+	ft_strlcat(result, merge_size, read_content, total_size);
 	free(*container);
 	return (*container = result, read_size);
 }
