@@ -6,31 +6,30 @@
 /*   By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 04:34:47 by dcerrito          #+#    #+#             */
-/*   Updated: 2022/04/14 08:49:22 by dcerrito         ###   ########.fr       */
+/*   Updated: 2022/04/15 02:49:07 by dcerrito         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int	fetches_content(int fd, int *total_read, char **__container)
+static int	fetches_content(int fd, long *total_read, char **container)
 {
 	char	*result;
 	char	read_content[BUFFER_SIZE];
-	char	*container;
 	int		merge_size;
-	int		read_size;
+	long	read_size;
 
-	container = *__container;
-	merge_size = 1 + ft_strlen(container);
-	result = malloc(BUFFER_SIZE + merge_size);
+	merge_size = ft_strlen(*container);
+	result = malloc(BUFFER_SIZE + merge_size + 1);
 	read_size = read(fd, read_content, BUFFER_SIZE);
-	*total_read += read_size;
+	if (read_size > 0)
+		*total_read += read_size;
 	if (!result || read_size <= 0)
 		return (free(result), read_size);
-	ft_strlcpy(result, container, merge_size);
-	ft_strlcat(result, read_content, read_size + merge_size);
-	free(container);
-	return (*__container = result, read_size);
+	ft_strcpy(result, *container, merge_size);
+	ft_strlcat(result, merge_size, read_content, read_size + merge_size + 1);
+	free(*container);
+	return (*container = result, read_size);
 }
 
 static char	*ft_sanitize(char **cont_ref, char *to_return, char *new_cont)
@@ -52,14 +51,12 @@ static char	*ft_get_line(char **cont_ref, int idx)
 
 char	*get_next_line(int fd)
 {
-	// static char	*fd_contents[1024];
 	static char	*content;
-	int			total_read;
-	int			i;
+	long		total_read;
+	long		i;
 
-	if (fd < 0 || BUFFER_SIZE < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	printf("%s", content);
 	fetches_content(fd, &total_read, &content);
 	while (content)
 	{
