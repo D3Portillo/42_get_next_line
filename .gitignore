@@ -3,3 +3,5 @@
 *.o
 main.c
 .default
+gnlTester
+Makefile
