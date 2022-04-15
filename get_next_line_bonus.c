@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 04:34:47 by dcerrito          #+#    #+#             */
-/*   Updated: 2022/04/15 03:22:26 by dcerrito         ###   ########.fr       */
+/*   Updated: 2022/04/15 07:48:44 by dcerrito         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static int	fetches_content(int fd, long *total_read, char **container)
 {
@@ -49,28 +49,31 @@ static char	*ft_get_line(char **cont_ref, int idx)
 	);
 }
 
+static char	*handle_parse(int fd, char **content, long total_read, long i)
+{
+	fetches_content(fd, &total_read, content);
+	while (*content)
+	{
+		i = -1;
+		while ((*content)[++i])
+			if ((*content)[i] == '\n')
+				return (ft_get_line(content, i + 1));
+		if (fetches_content(fd, &total_read, content) == 0)
+		{
+			if (i == 0)
+				return (ft_sanitize(content, NULL, NULL));
+			if (total_read >= BUFFER_SIZE || i < BUFFER_SIZE)
+				return (ft_sanitize(content, ft_strdup(*content), NULL));
+		}
+	}
+	return (*content);
+}
+
 char	*get_next_line(int fd)
 {
-	static char	*content;
-	long		total_read;
-	long		i;
+	static char	*content_arr[1024];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	fetches_content(fd, &total_read, &content);
-	while (content)
-	{
-		i = -1;
-		while (content[++i])
-			if (content[i] == '\n')
-				return (ft_get_line(&content, i + 1));
-		if (fetches_content(fd, &total_read, &content) == 0)
-		{
-			if (i == 0)
-				return (ft_sanitize(&content, NULL, NULL));
-			if (total_read >= BUFFER_SIZE || i < BUFFER_SIZE)
-				return (ft_sanitize(&content, ft_strdup(content), NULL));
-		}
-	}
-	return (content);
+	return (handle_parse(fd, &content_arr[fd], 0, 0));
 }
