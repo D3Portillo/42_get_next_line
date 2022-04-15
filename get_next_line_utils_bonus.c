@@ -6,7 +6,7 @@
 /*   By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/13 04:22:28 by dcerrito          #+#    #+#             */
-/*   Updated: 2022/04/15 07:48:51 by dcerrito         ###   ########.fr       */
+/*   Updated: 2022/04/15 10:49:23 by dcerrito         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_substr(char const *src, unsigned int start, size_t size)
 	i = -1;
 	while (++i, i < (int)size)
 		result[i] = src[start + i];
-	result[size] = '\0';
+	result[i] = '\0';
 	return (result);
 }
 
@@ -43,8 +43,10 @@ void	ft_strcpy(char *dest, char *src, int limit)
 {	
 	int	i;
 
+	if (!dest || !src)
+		return ;
 	i = -1;
-	while (++i, src && src[i] && i < limit)
+	while (++i, src[i] && i < limit)
 		dest[i] = src[i];
 }
 
@@ -53,6 +55,8 @@ void	ft_strlcat(char *dest, int dest_size, char *src, int limit)
 	int	j;
 
 	j = 0;
+	if (!dest || !src)
+		return ;
 	while (src[j] && (dest_size + 1) < limit)
 		dest[dest_size++] = src[j++];
 	dest[dest_size] = '\0';
@@ -63,6 +67,8 @@ char	*ft_strdup(char *source)
 	int		size;
 	char	*dest;
 
+	if (!source)
+		return (NULL);
 	size = ft_strlen(source);
 	dest = malloc(size + 1);
 	if (!dest)
