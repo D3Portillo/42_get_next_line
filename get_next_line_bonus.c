@@ -6,7 +6,7 @@
 /*   By: dcerrito <dcerrito@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/12 04:34:47 by dcerrito          #+#    #+#             */
-/*   Updated: 2022/04/15 10:49:34 by dcerrito         ###   ########.fr       */
+/*   Updated: 2022/04/17 03:49:16 by dcerrito         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,7 @@ static char	*handle_parse(int fd, char **content, long total_read, long i)
 		{
 			if (i == 0)
 				return (ft_sanitize(content, NULL, NULL));
-			if (total_read >= BUFFER_SIZE || i < BUFFER_SIZE)
-				return (ft_sanitize(content, ft_strdup(*content), NULL));
+			return (ft_sanitize(content, ft_strdup(*content), NULL));
 		}
 	}
 	return (*content);
